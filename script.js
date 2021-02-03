@@ -1,5 +1,11 @@
 var apiKey = "9ffba577a38eec73c530d29d74f789eb"
-// var date = new Date(); 
+var unixTimestamp;
+var date;
+var month;
+var year;
+var day;
+var formattedDate;
+
 
 $("#searchBtn").on("click", function (event) {
     event.preventDefault();
@@ -10,20 +16,22 @@ $("#searchBtn").on("click", function (event) {
     }
     console.log(city);
     searchApi(city)
+    // TODO: clear form 
+    // TODO: store city in local storage 
 })
 
 function printCurrent(result) {
 
     var currentWeather = $("#currentWeather")
-    var unixTimestamp = result.dt
-    var date = new Date(unixTimestamp * 1000);
-    var month = date.getMonth();
-    var year = date.getFullYear();
-    var day = date.getDay();
-    var formattedDate = month + "/" + day + "/" + year
+    unixTimestamp = result.dt
+    date = new Date(unixTimestamp * 1000);
+    month = date.getMonth();
+    year = date.getFullYear();
+    day = date.getDate();
+    formattedDate = month + "/" + day + "/" + year
 
     // TODO: style output
-    $(currentWeather).append("<h2>" + result.name + " " + formattedDate + "</h2>")
+    $(currentWeather).append("<h2>" + result.name + " (" + formattedDate + ") </h2>")
     $(currentWeather).append("<p>Temperature: " + result.main.temp + " &degF </p>")
     $(currentWeather).append("<p>Humidity: " + result.main.humidity + "% </p>")
     $(currentWeather).append("<p>Wind Speed: " + result.wind.speed + "MPH</p>")
@@ -36,22 +44,35 @@ function printCurrent(result) {
 
 function printForecast(result) {
     var weatherForecast = $("#weatherForecast")
-    for (var i = 0; i < result.list.length; i += 8) {
-        var unixTimestamp = result.list[i].dt
-        var date = new Date(unixTimestamp * 1000);
-        var month = date.getMonth();
-        var year = date.getFullYear();
-        var day = date.getDay();
-        var formattedDate = month + "/" + day + "/" + year
-        $(weatherForecast).append("<p>" + formattedDate + "</p>")
-        var iconImg = $("<img>")
-        var iconCode = result.list[i].weather[i].icon
-        console.log(iconCode);
-        var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
-        $(iconImg).attr('src', iconUrl)
-        $(weatherForecast).append(iconImg)
-        $(weatherForecast).append("<p> Temp: " + result.list[i].main.temp + "&degF </p>")
-        $(weatherForecast).append("<p> Humidity: " + result.list[i].main.temp + "% </p>")
+    var forecastTitle = $("<div>")
+    $(forecastTitle).attr("class", "container")
+    $(weatherForecast).append(forecastTitle)
+    $(forecastTitle).append("<h3>5-Day Forecast: </h3>")
+    // $(weatherForecast).append("<hr><br>")
+    for (var i = 7; i < result.list.length; i += 8) {
+        console.log(i);
+        unixTimestamp = result.list[i].dt
+        date = new Date(unixTimestamp * 1000);
+        month = date.getMonth();
+        year = date.getFullYear();
+        day = date.getDate();
+        hour = date.getHours();
+        console.log(day);
+        console.log(hour);
+        formattedDate = month + "/" + day + "/" + year
+        var forecastBox = $("<div>")
+        $(forecastBox).attr("class", "col bg-primary m-3")
+        $(weatherForecast).append(forecastBox)
+        $(forecastBox).append("<p><strong>" + formattedDate + "</strong></p>")
+
+        // var iconImg = $("<img>")
+        // var iconCode = result.list[i].weather[i].icon
+        // console.log(iconCode);
+        // var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
+        // $(iconImg).attr('src', iconUrl)
+        // $(weatherForecast).append(iconImg)
+        $(forecastBox).append("<p> Temp: " + result.list[i].main.temp + "&degF </p>")
+        $(forecastBox).append("<p> Humidity: " + result.list[i].main.temp + "% </p>")
     }
 
 }
