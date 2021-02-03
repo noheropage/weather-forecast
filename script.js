@@ -16,7 +16,6 @@ function parseLocal() {
         $(cityBtn).attr("id", "searchedCities")
         $(cityBtn).text(h[i])
         $(cityBtn).val(h[i])
-        // console.log(searchBtn);
         $(".search-history").prepend(cityBtn)
     }
 }
@@ -35,18 +34,46 @@ $(document).on("click", ".btn", function (event) {
     }
     $("#currentWeather").empty()
     $("#weatherForecast").empty()
-    // console.log(city);
-    // h.push(city)
     localStorage.setItem("oldCity", JSON.stringify(h))
-    // parseLocal()
     searchApi(city)
-    // TODO: clear form 
-    // TODO: store city in local storage 
 })
 
-function printCurrent(result) {
+function uvIndex(lat, lon) {
+    var apiCallUv = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey
+    console.log(apiCallUv);
+    fetch(apiCallUv).then(function (response) {
+        if (!response.ok) {
+            throw response.json();
+        }
+        // console.log(response.json());
+        return response.json();
+    })
+        .then(function (uv) {
+            printUv(uv);
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+}
 
+
+function printUv(uv) {
+    var uvValue = uv.current.uvi
+    var uvText = $("<p>")
+    $(uvText).append("UV Index: " + uvValue + "")
+    if (uvValue <= 2) {
+        $(uvText).attr("style", "background: green")
+    } else if (uvValue > 2 && uvValue <= 5) {
+        $(uvText).attr("style", "background: yellow")
+    } else {
+        $(uvText.attr("style", "background: red"))
+    }
+    $(currentWeather).append(uvText)  
+}
+
+function printCurrent(result) {
     var currentWeather = $("#currentWeather")
+    $(currentWeather).attr("class", "border rounded-sm p-3")
     unixTimestamp = result.dt
     date = new Date(unixTimestamp * 1000);
     month = date.getMonth();
@@ -56,21 +83,23 @@ function printCurrent(result) {
 
     var iconImg = $("<img>")
     var iconCode = result.weather[0].icon
-    // console.log(iconCode);
     var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
     $(iconImg).attr('src', iconUrl)
     $(currentWeather).append(iconImg)
     if (jQuery.inArray(result.name, h) == -1) {
-        // console.log("not in the array yet");
         h.push(result.name)
         parseLocal();
     }
-    
+
+    var lat = result.coord.lat
+    var lon = result.coord.lon
+    uvIndex(lat, lon)
+
     $(currentWeather).append("<h2>" + result.name + " (" + formattedDate + ") </h2>")
     $(currentWeather).append("<p>Temperature: " + result.main.temp + " &degF </p>")
     $(currentWeather).append("<p>Humidity: " + result.main.humidity + "% </p>")
     $(currentWeather).append("<p>Wind Speed: " + result.wind.speed + "MPH</p>")
-    $(currentWeather).append("<p>UV Index: </p>")  // TODO: UV index 
+    // $(currentWeather).append("<p>UV Index: " +  + "</p>")  // TODO: UV index 
 }
 
 function printForecast(result) {
@@ -80,15 +109,12 @@ function printForecast(result) {
     $(weatherForecast).append(forecastTitle)
     $(forecastTitle).append("<h3>5-Day Forecast: </h3>")
     for (var i = 7; i < result.list.length; i += 8) {
-        // console.log(i);
         unixTimestamp = result.list[i].dt
         date = new Date(unixTimestamp * 1000);
         month = date.getMonth();
         year = date.getFullYear();
         day = date.getDate();
         hour = date.getHours();
-        // console.log(day);
-        // console.log(hour);
         formattedDate = month + "/" + day + "/" + year
         var forecastBox = $("<div>")
         $(forecastBox).attr("class", "col bg-primary m-3")
@@ -97,7 +123,6 @@ function printForecast(result) {
 
         var iconImg = $("<img>")
         var iconCode = result.list[i].weather[0].icon
-        // console.log(iconCode);
         var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
         $(iconImg).attr('src', iconUrl)
         $(iconImg).attr('width', "50px")
@@ -114,11 +139,9 @@ function searchApi(city) {
         if (!response.ok) {
             throw response.json();
         }
-        // console.log(apiCallCurrent);
         return response.json();
     })
         .then(function (current) {
-            // console.log(current);
             printCurrent(current);
         })
         .catch(function (error) {
@@ -128,11 +151,9 @@ function searchApi(city) {
         if (!response.ok) {
             throw response.json();
         }
-        // console.log(apiCallForecast);
         return response.json();
     })
         .then(function (forecast) {
-            // console.log(forecast);
             printForecast(forecast);
         })
         .catch(function (error) {
