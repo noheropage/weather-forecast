@@ -21,20 +21,14 @@ function parseLocal() {
     }
 }
 
-
 localStorage.setItem("oldCity", JSON.stringify(h))
-
-// $(cityBtn).on("click", function(event) {
-//     console.log($(this));
-//     var city = $(this).val()
-//     console.log(city);
-// })
 
 $(document).on("click", ".btn", function (event) {
     event.preventDefault();
     // console.log(this);
     console.log($(this));
     var city = $("#searchCity").val() || $(this).val();
+    $("#searchCity").val('');
     if (!city) {
         console.error("You must enter the name of a city");
         return;
@@ -67,21 +61,16 @@ function printCurrent(result) {
     $(iconImg).attr('src', iconUrl)
     $(currentWeather).append(iconImg)
     if (jQuery.inArray(result.name, h) == -1) {
-        console.log("not in the array yet");
+        // console.log("not in the array yet");
         h.push(result.name)
         parseLocal();
     }
     
-    // TODO: style output
     $(currentWeather).append("<h2>" + result.name + " (" + formattedDate + ") </h2>")
     $(currentWeather).append("<p>Temperature: " + result.main.temp + " &degF </p>")
     $(currentWeather).append("<p>Humidity: " + result.main.humidity + "% </p>")
     $(currentWeather).append("<p>Wind Speed: " + result.wind.speed + "MPH</p>")
     $(currentWeather).append("<p>UV Index: </p>")  // TODO: UV index 
-
-
-
-    // console.log(result.name);
 }
 
 function printForecast(result) {
@@ -116,7 +105,6 @@ function printForecast(result) {
         $(forecastBox).append("<p> Temp: " + result.list[i].main.temp + "&degF </p>")
         $(forecastBox).append("<p> Humidity: " + result.list[i].main.temp + "% </p>")
     }
-
 }
 
 function searchApi(city) {
@@ -153,10 +141,3 @@ function searchApi(city) {
 }
 
 parseLocal();
-
-
-// TODO: store city names in local storage and display on side
-
-// TODO: Display current info 
-
-// TODO: Display 5-Day Forecast with icons
