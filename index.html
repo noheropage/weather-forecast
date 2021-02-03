@@ -11,15 +11,14 @@
 </head>
 
 <body>
-    <!-- TODO: Header that says Weather Dashboard -->
+    <!-- large banner at top -->
     <header class="container-fluid jumbotron bg-dark text-light">
         <h1>Weather Dashboard</h1>
     </header>
 
-
-    <!-- TODO: search bar on left hand side -->
     <div class="container-fluid">
         <div class="row">
+            <!-- set up search and history area on the left hand side -->
             <div class="col-4 bg-light p-3">
                 <div class="search-area row">
                     <h3>Search for a City:</h3>
@@ -29,14 +28,13 @@
                             <button id="searchBtn" class="btn btn-info btn-block">Search</button>
                         </div>
                     </form>
-                    <div class="search-history container mt-3"><button class="btn"></button></div>
+                    <div class="search-history container mt-3"></div>
                 </div>
             </div>
 
-
+            <!-- main text area for current weather and forecasted weather -->
             <div id="weatherBox" class="col-8 p-3">
-                <div id="currentWeather" class=""></div>
-
+                <div id="currentWeather"></div>
                 <div id="weatherForecast" class="row"></div>
             </div>
         </div>

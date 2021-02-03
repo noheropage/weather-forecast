@@ -1,3 +1,7 @@
 #searchBtn {
     font-weight: 700;
 }
+
+#searchedCities {
+    background-color: purple;
+}
