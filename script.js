@@ -14,7 +14,7 @@ function parseLocal() {
         $(searchBtn).attr("class", "btn btn-info btn-block")
         $(searchBtn).text(h[i])
         $(searchBtn).val(h[i])
-        $(".search-history").append(searchBtn)
+        $(".search-history").prepend(searchBtn)
     }
 }
 
@@ -32,7 +32,7 @@ $("#searchBtn").on("click", function (event) {
     $("#currentWeather").empty()
     $("#weatherForecast").empty()
     // console.log(city);
-    h.push(city)
+    // h.push(city)
     localStorage.setItem("oldCity", JSON.stringify(h))
     parseLocal()
     searchApi(city)
@@ -56,7 +56,11 @@ function printCurrent(result) {
     var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
     $(iconImg).attr('src', iconUrl)
     $(currentWeather).append(iconImg)
-
+    if (jQuery.inArray(result.name, h) == -1) {
+        console.log("not in the array yet");
+        h.push(result.name)
+    }
+    
     // TODO: style output
     $(currentWeather).append("<h2>" + result.name + " (" + formattedDate + ") </h2>")
     $(currentWeather).append("<p>Temperature: " + result.main.temp + " &degF </p>")
@@ -110,11 +114,11 @@ function searchApi(city) {
         if (!response.ok) {
             throw response.json();
         }
-        console.log(apiCallCurrent);
+        // console.log(apiCallCurrent);
         return response.json();
     })
         .then(function (current) {
-            console.log(current);
+            // console.log(current);
             printCurrent(current);
         })
         .catch(function (error) {
@@ -124,11 +128,11 @@ function searchApi(city) {
         if (!response.ok) {
             throw response.json();
         }
-        console.log(apiCallForecast);
+        // console.log(apiCallForecast);
         return response.json();
     })
         .then(function (forecast) {
-            console.log(forecast);
+            // console.log(forecast);
             printForecast(forecast);
         })
         .catch(function (error) {
@@ -136,7 +140,7 @@ function searchApi(city) {
         });
 }
 
-
+parseLocal();
 
 
 // TODO: store city names in local storage and display on side
