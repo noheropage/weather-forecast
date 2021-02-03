@@ -5,26 +5,36 @@ var month;
 var year;
 var day;
 var formattedDate;
+var cityBtn = $("<button>")
 
 var h = JSON.parse(localStorage.getItem("oldCity")) || []
 function parseLocal() {
     $(".search-history").empty()
     for (var i = 0; i < h.length; i++) {
-        var searchBtn = $("<button>")
-        $(searchBtn).attr("class", "btn btn-info btn-block")
-        $(searchBtn).text(h[i])
-        $(searchBtn).val(h[i])
-        $(".search-history").prepend(searchBtn)
+        cityBtn = $("<button>")
+        $(cityBtn).attr("class", "btn btn-info btn-block")
+        $(cityBtn).attr("id", "searchedCities")
+        $(cityBtn).text(h[i])
+        $(cityBtn).val(h[i])
+        // console.log(searchBtn);
+        $(".search-history").prepend(cityBtn)
     }
 }
 
 
 localStorage.setItem("oldCity", JSON.stringify(h))
 
+// $(cityBtn).on("click", function(event) {
+//     console.log($(this));
+//     var city = $(this).val()
+//     console.log(city);
+// })
 
-$("#searchBtn").on("click", function (event) {
+$(document).on("click", ".btn", function (event) {
     event.preventDefault();
-    var city = $("#searchCity").val();
+    // console.log(this);
+    console.log($(this));
+    var city = $("#searchCity").val() || $(this).val();
     if (!city) {
         console.error("You must enter the name of a city");
         return;
@@ -34,7 +44,7 @@ $("#searchBtn").on("click", function (event) {
     // console.log(city);
     // h.push(city)
     localStorage.setItem("oldCity", JSON.stringify(h))
-    parseLocal()
+    // parseLocal()
     searchApi(city)
     // TODO: clear form 
     // TODO: store city in local storage 
@@ -59,6 +69,7 @@ function printCurrent(result) {
     if (jQuery.inArray(result.name, h) == -1) {
         console.log("not in the array yet");
         h.push(result.name)
+        parseLocal();
     }
     
     // TODO: style output
@@ -100,6 +111,7 @@ function printForecast(result) {
         // console.log(iconCode);
         var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
         $(iconImg).attr('src', iconUrl)
+        $(iconImg).attr('width', "50px")
         $(forecastBox).append(iconImg)
         $(forecastBox).append("<p> Temp: " + result.list[i].main.temp + "&degF </p>")
         $(forecastBox).append("<p> Humidity: " + result.list[i].main.temp + "% </p>")
