@@ -6,6 +6,21 @@ var year;
 var day;
 var formattedDate;
 
+var h = JSON.parse(localStorage.getItem("oldCity")) || []
+function parseLocal() {
+    $(".search-history").empty()
+    for (var i = 0; i < h.length; i++) {
+        var searchBtn = $("<button>")
+        $(searchBtn).attr("class", "btn btn-info btn-block")
+        $(searchBtn).text(h[i])
+        $(searchBtn).val(h[i])
+        $(".search-history").append(searchBtn)
+    }
+}
+
+
+localStorage.setItem("oldCity", JSON.stringify(h))
+
 
 $("#searchBtn").on("click", function (event) {
     event.preventDefault();
@@ -14,7 +29,12 @@ $("#searchBtn").on("click", function (event) {
         console.error("You must enter the name of a city");
         return;
     }
-    console.log(city);
+    $("#currentWeather").empty()
+    $("#weatherForecast").empty()
+    // console.log(city);
+    h.push(city)
+    localStorage.setItem("oldCity", JSON.stringify(h))
+    parseLocal()
     searchApi(city)
     // TODO: clear form 
     // TODO: store city in local storage 
@@ -32,7 +52,7 @@ function printCurrent(result) {
 
     var iconImg = $("<img>")
     var iconCode = result.weather[0].icon
-    console.log(iconCode);
+    // console.log(iconCode);
     var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
     $(iconImg).attr('src', iconUrl)
     $(currentWeather).append(iconImg)
@@ -46,7 +66,7 @@ function printCurrent(result) {
 
 
 
-    console.log(result.name);
+    // console.log(result.name);
 }
 
 function printForecast(result) {
@@ -56,15 +76,15 @@ function printForecast(result) {
     $(weatherForecast).append(forecastTitle)
     $(forecastTitle).append("<h3>5-Day Forecast: </h3>")
     for (var i = 7; i < result.list.length; i += 8) {
-        console.log(i);
+        // console.log(i);
         unixTimestamp = result.list[i].dt
         date = new Date(unixTimestamp * 1000);
         month = date.getMonth();
         year = date.getFullYear();
         day = date.getDate();
         hour = date.getHours();
-        console.log(day);
-        console.log(hour);
+        // console.log(day);
+        // console.log(hour);
         formattedDate = month + "/" + day + "/" + year
         var forecastBox = $("<div>")
         $(forecastBox).attr("class", "col bg-primary m-3")
@@ -73,7 +93,7 @@ function printForecast(result) {
 
         var iconImg = $("<img>")
         var iconCode = result.list[i].weather[0].icon
-        console.log(iconCode);
+        // console.log(iconCode);
         var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
         $(iconImg).attr('src', iconUrl)
         $(forecastBox).append(iconImg)
@@ -83,7 +103,6 @@ function printForecast(result) {
 
 }
 
-// TODO: Put that city name into weather API fetch
 function searchApi(city) {
     var apiCallCurrent = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + apiKey;
     var apiCallForecast = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
@@ -121,12 +140,6 @@ function searchApi(city) {
 
 
 // TODO: store city names in local storage and display on side
-// var h = localStorage.getItem("history") || []
-// localStorage.setItem("history", JSON.stringify(h))
-
-// h.push("Portland")
-
-// localStorage.setItem("history", JSON.stringify(h))
 
 // TODO: Display current info 
 
