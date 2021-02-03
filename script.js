@@ -30,6 +30,13 @@ function printCurrent(result) {
     day = date.getDate();
     formattedDate = month + "/" + day + "/" + year
 
+    var iconImg = $("<img>")
+    var iconCode = result.weather[0].icon
+    console.log(iconCode);
+    var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
+    $(iconImg).attr('src', iconUrl)
+    $(currentWeather).append(iconImg)
+
     // TODO: style output
     $(currentWeather).append("<h2>" + result.name + " (" + formattedDate + ") </h2>")
     $(currentWeather).append("<p>Temperature: " + result.main.temp + " &degF </p>")
@@ -48,7 +55,6 @@ function printForecast(result) {
     $(forecastTitle).attr("class", "container")
     $(weatherForecast).append(forecastTitle)
     $(forecastTitle).append("<h3>5-Day Forecast: </h3>")
-    // $(weatherForecast).append("<hr><br>")
     for (var i = 7; i < result.list.length; i += 8) {
         console.log(i);
         unixTimestamp = result.list[i].dt
@@ -65,12 +71,12 @@ function printForecast(result) {
         $(weatherForecast).append(forecastBox)
         $(forecastBox).append("<p><strong>" + formattedDate + "</strong></p>")
 
-        // var iconImg = $("<img>")
-        // var iconCode = result.list[i].weather[i].icon
-        // console.log(iconCode);
-        // var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
-        // $(iconImg).attr('src', iconUrl)
-        // $(weatherForecast).append(iconImg)
+        var iconImg = $("<img>")
+        var iconCode = result.list[i].weather[0].icon
+        console.log(iconCode);
+        var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
+        $(iconImg).attr('src', iconUrl)
+        $(forecastBox).append(iconImg)
         $(forecastBox).append("<p> Temp: " + result.list[i].main.temp + "&degF </p>")
         $(forecastBox).append("<p> Humidity: " + result.list[i].main.temp + "% </p>")
     }
